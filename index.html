@@ -79,8 +79,11 @@ section{padding:64px 0}
 .mobile-nav{display:none;background:var(--cobalt-deep);border-top:1px solid rgba(255,255,255,.15)}
 .mobile-nav.open{display:block}
 .mobile-nav a{display:block;padding:14px 16px;color:#fff;text-decoration:none;font-weight:700;border-bottom:1px solid rgba(255,255,255,.1)}
-@media (max-width:480px){.call .num{display:none}.call::after{content:" us"}}
-.bar .wrap{min-width:0}.brand{min-width:0;overflow:hidden;text-overflow:ellipsis}
+
+.brand{flex:none;overflow:visible}
+.call svg{width:18px;height:18px;display:none}
+@media (max-width:480px){.call{padding:0;width:44px;height:40px;display:grid;place-items:center}.call .lbl,.call::after{display:none;content:none}.call svg{display:block}}
+@media (max-width:340px){.brand{font-size:18px}.bar .wrap{gap:8px}}
 @media (min-width:860px){.nav{display:flex}.call{margin-left:8px}.menu-btn,.mobile-nav,.mobile-nav.open{display:none}}
 
 /* hero */
@@ -89,7 +92,9 @@ section{padding:64px 0}
 .dot{width:10px;height:10px;border-radius:50%;background:#aaa}
 .dot.open{background:var(--mint);box-shadow:0 0 0 4px rgba(62,224,167,.25)}
 .dot.closed{background:var(--pink)}
-.hero h1{font-size:clamp(46px,11vw,112px);margin:22px 0 18px;max-width:11ch}
+.hero h1{font-size:clamp(40px,10.5vw,104px);margin:22px 0 10px;overflow-wrap:normal;word-break:keep-all}
+.hero h1 span{color:var(--sticker);white-space:nowrap}
+.tagline{font-family:"Archivo",sans-serif;font-stretch:115%;font-weight:800;font-size:clamp(22px,4.4vw,36px);line-height:1.1;margin:0 0 22px;max-width:22ch}
 .hero p{font-size:19px;max-width:44ch;margin:0 0 28px;opacity:.92}
 .tags{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 34px;padding:0;list-style:none}
 .tag{position:relative;background:var(--sticker);color:#14142b;font-family:"Archivo";font-stretch:115%;font-weight:900;font-size:clamp(20px,4.6vw,30px);padding:10px 22px 10px 34px;border-radius:var(--radius-sm) 14px 14px var(--radius-sm);clip-path:polygon(16px 0,100% 0,100% 100%,16px 100%,0 50%);box-shadow:0 4px 0 rgba(0,0,0,.25)}
@@ -196,7 +201,7 @@ footer a{opacity:.9}
       <a href="#sell">Sell or trade</a>
       <a href="#visit">Visit</a>
     </nav>
-    <a class="call" href="tel:+16137790957">Call <span class="num">613-779-0957</span></a>
+    <a class="call" href="tel:+16137790957" aria-label="Call 613-779-0957"><span class="lbl">Call 613-779-0957</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
@@ -214,7 +219,8 @@ footer a{opacity:.9}
     <div class="wrap hero-grid">
      <div>
       <div class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">Checking hours…</span></div>
-      <h1>The Quinte area's biggest game shop.</h1>
+      <h1>P-Market <span>Games</span></h1>
+      <p class="tagline">The Quinte area's biggest game shop.</p>
       <ul class="tags" aria-label="Services">
         <li class="tag">We buy</li>
         <li class="tag">We sell</li>
