@@ -142,7 +142,19 @@ section{padding:64px 0}
 /* events */
 .events-section{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;padding:0;list-style:none}
-.chips li{border:2px solid var(--line);padding:6px 14px;border-radius:999px;font-weight:700;font-size:15px}
+.chips{margin-top:14px}
+.chip{border:2px solid var(--line);background:transparent;color:var(--ink);padding:9px 16px;border-radius:999px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:8px}
+.chip::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(45deg) translateY(-2px);opacity:.6}
+.chip[aria-expanded="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.chip[aria-expanded="true"]::after{transform:rotate(225deg) translate(-2px,0)}
+.chip:hover{border-color:var(--ink)}
+.gamepanel{margin-top:14px;padding:20px;border-radius:var(--radius-lg);background:var(--paper);border:1px solid var(--line);border-left:8px solid var(--g,var(--cobalt));display:grid;gap:12px;max-width:720px}
+.gamepanel[hidden]{display:none}
+.gamepanel h3{margin:0}
+.gamepanel dl{margin:0;display:grid;gap:10px}
+.gamepanel dt{font-size:13px;font-weight:700;color:var(--muted)}
+.gamepanel dd{margin:2px 0 0}
+.gamepanel .btn{justify-self:start;background:var(--ink);color:var(--paper);padding:10px 18px;font-size:15px}
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (min-width:860px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
 .photo{margin:0;aspect-ratio:4/3;max-width:100%;border-radius:var(--radius-lg);border:2px dashed var(--line);background:var(--card);display:grid;place-items:center;overflow:hidden;text-align:center;color:var(--muted);font-size:14px;font-weight:700;padding:12px}
@@ -297,9 +309,9 @@ footer a{opacity:.9}
       <p class="lede">New players are always welcome. Bring a deck or borrow one, and ask staff to walk you through your first game.</p>
       <div class="days" id="eventList"></div>
       <h3 style="margin-top:32px">Also played here</h3>
-      <ul class="chips" aria-label="Other games with events">
-        <li>Pokémon</li><li>Yu-Gi-Oh!</li><li>Lorcana</li><li>Digimon</li><li>Warhammer 40k</li>
-      </ul>
+      <p class="note" style="margin-top:6px">Tap a game to see what's played and when.</p>
+      <div class="chips" id="gameChips" role="group" aria-label="Other games"></div>
+      <div class="gamepanel" id="gamePanel" hidden></div>
       <p class="note">Tournament dates change with each new set. Check our <a href="https://www.facebook.com/PmarketGames127">Facebook page</a> or call for this month's schedule. Seats fill up, so call ahead to reserve.</p>
     </div>
   </section>
@@ -372,6 +384,15 @@ const HOURS = {0:[10,18],1:[10,18],2:[10,18],3:[10,18],4:[10,18],5:[10,18],6:[10
 const WEEKLY = [
   {day:0, hour:11, time:"11:00 am", game:"Magic", name:"Commander Funday", detail:"Casual four-player Commander pods. Up to 24 players."}
 ];
+// Other games, shown when someone taps a game button under "Also played here".
+// "when" is only filled in where it's confirmed. Update these with the store's real schedule.
+const GAMES = [
+  {name:"Pokémon", color:"#d99a00", what:"Pokémon TCG play and trading. Sealed product, singles and supplies in store.", when:"Event days change with each new set. Call or check our Facebook page for the next one."},
+  {name:"Yu-Gi-Oh!", color:"#7a3cc9", what:"Yu-Gi-Oh! tournaments for new and experienced duelists. Singles and sealed product in store.", when:"Event days change with each new set. Call or check our Facebook page for the next one."},
+  {name:"Lorcana", color:"#ff4f8b", what:"Disney Lorcana Set Championships, plus singles and sealed product.", when:"Set Championships run on Saturday afternoons when each new set comes out. Recent ones were Aug 2, 2025 and Jan 3, 2026."},
+  {name:"Digimon", color:"#1f8ad1", what:"Digimon Card Game product and play.", when:"Ask in store or call about upcoming Digimon events."},
+  {name:"Warhammer 40k", color:"#1f8a63", what:"Warhammer 40k and Age of Sigmar models, paints and starter sets. Ask about tables for games.", when:"Call to ask about game nights and table time."}
+];
 // One-off events. Each disappears from the site after its date.
 const SPECIALS = [
   {date:"2026-11-07", hour:11, time:"11:00 am", game:"Magic", name:"Star Trek Prerelease", detail:"Magic: The Gathering prerelease. Up to 24 players. Call to reserve a seat."},
@@ -433,6 +454,27 @@ function dayLabel(d){
     el.innerHTML='<div class="ev-day">'+DAY[e.when.getDay()].slice(0,3)+'<small class="date">'+sub+'</small></div>'+
       '<div><h3>'+e.name+'</h3><p>'+(e.weekly?"Every "+DAY[e.day]+" at "+e.time:dayLabel(e.when).replace(/^./,c=>c.toUpperCase())+" at "+e.time)+'. '+e.detail+'</p></div>';
     list.appendChild(el);
+  });
+})();
+
+// Game buttons under "Also played here"
+(function(){
+  const wrap=document.getElementById("gameChips"), panel=document.getElementById("gamePanel");
+  let open=null;
+  GAMES.forEach((g,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=g.name;
+    b.setAttribute("aria-expanded","false"); b.setAttribute("aria-controls","gamePanel");
+    b.addEventListener("click",()=>{
+      wrap.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-expanded","false"));
+      if(open===i){ open=null; panel.hidden=true; return; }
+      open=i; b.setAttribute("aria-expanded","true");
+      panel.style.setProperty("--g",g.color);
+      panel.innerHTML='<h3>'+g.name+'</h3><dl><div><dt>What we play</dt><dd>'+g.what+'</dd></div><div><dt>When</dt><dd>'+g.when+'</dd></div></dl>'+
+        '<p class="note" style="margin:0">Questions? Call <strong>613-779-0957</strong></p>'+
+        '<a class="btn" href="https://www.facebook.com/PmarketGames127">See event posts on Facebook</a>';
+      panel.hidden=false;
+    });
+    wrap.appendChild(b);
   });
 })();
 
