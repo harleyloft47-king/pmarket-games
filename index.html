@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>P-Market Games Concept</title>
+<title>P Market Games Concept</title>
 <meta name="robots" content="noindex, nofollow">
-<meta name="description" content="P-Market Games, 127 North Front St, Belleville. New and retro video games, consoles, trading cards and Warhammer. We buy, sell and trade. Weekly Magic, Pokémon, Yu-Gi-Oh! and Lorcana events.">
+<meta name="description" content="P Market Games, 127 North Front St, Belleville. New and retro video games, consoles, trading cards, collectibles and Warhammer. We buy, sell and trade. Commander every Sunday plus card game tournaments.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
@@ -13,7 +13,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Store",
-  "name": "P-Market Games",
+  "name": "P Market Games",
   "address": {"@type": "PostalAddress","streetAddress": "127 North Front St","addressLocality": "Belleville","addressRegion": "ON","postalCode": "K8P 3B5","addressCountry": "CA"},
   "telephone": "+1-613-779-0957",
   "sameAs": ["https://www.facebook.com/PmarketGames127"]
@@ -141,7 +141,16 @@ section{padding:64px 0}
 
 /* events */
 .events-section{background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 0;padding:0;list-style:none}
+.chips li{border:2px solid var(--line);padding:6px 14px;border-radius:999px;font-weight:700;font-size:15px}
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+@media (min-width:860px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
+.photo{margin:0;aspect-ratio:4/3;max-width:100%;border-radius:var(--radius-lg);border:2px dashed var(--line);background:var(--card);display:grid;place-items:center;overflow:hidden;text-align:center;color:var(--muted);font-size:14px;font-weight:700;padding:12px}
+.photo span{display:grid;justify-items:center;gap:8px}
+.photo svg{width:28px;height:28px;fill:currentColor;opacity:.6}
+.photo img{width:100%;height:100%;object-fit:cover;display:block}
+.photo:has(img){border:0;padding:0}
+.ev-day small.date{font-size:11px}
 .chip{border:2px solid var(--line);background:transparent;color:var(--ink);padding:8px 14px;border-radius:999px;font-weight:700;font-size:15px;cursor:pointer;font-family:inherit}
 .chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .days{display:grid;gap:12px}
@@ -190,11 +199,11 @@ footer a{opacity:.9}
 </head>
 <body>
 
-<div class="demo">Concept site, not the official P-Market Games website. Hours and event times are placeholders until confirmed with the store.</div>
+<div class="demo">Concept site, not the official P Market Games website. Store hours are still being confirmed.</div>
 
 <header class="bar">
   <div class="wrap">
-    <a class="brand" href="#top">P-Market <span>Games</span></a>
+    <a class="brand" href="#top">P Market <span>Games</span></a>
     <nav class="nav" aria-label="Main">
       <a href="#carry">What we carry</a>
       <a href="#events">Events</a>
@@ -219,7 +228,7 @@ footer a{opacity:.9}
     <div class="wrap hero-grid">
      <div>
       <div class="status" id="status"><span class="dot" id="dot"></span><span id="statusText">Checking hours…</span></div>
-      <h1>P-Market <span>Games</span></h1>
+      <h1>P Market <span>Games</span></h1>
       <p class="tagline">The Quinte area's biggest game shop.</p>
       <ul class="tags" aria-label="Services">
         <li class="tag">We buy</li>
@@ -234,7 +243,7 @@ footer a{opacity:.9}
       <p class="addr">127 North Front St, Belleville, ON K8P 3B5</p>
      </div>
       <aside class="today-card" aria-label="Today at the store">
-        <h2>Today at P-Market</h2>
+        <h2>Today at P Market</h2>
         <dl>
           <div><dt>Hours</dt><dd id="todayHours">–</dd></div>
           <div><dt>Next event</dt><dd id="nextEvent">–</dd></div>
@@ -246,9 +255,9 @@ footer a{opacity:.9}
 
   <div class="proof">
     <ul class="wrap">
-      <li><strong>4.7★</strong><span>from 291 Google reviews</span></li>
-      <li><strong>96%</strong><span>recommend us on Facebook</span></li>
-      <li><strong>Weekly</strong><span>Magic, Pokémon, Yu-Gi-Oh! and Lorcana</span></li>
+      <li><strong>4.7★</strong><span>from 423 Google reviews</span></li>
+      <li><strong>96%</strong><span>recommend us on Facebook (125 reviews)</span></li>
+      <li><strong>Sundays</strong><span>Commander Funday at 11 am</span></li>
       <li><strong>Fan Expo</strong><span>vendor in 2026</span></li>
     </ul>
   </div>
@@ -261,20 +270,37 @@ footer a{opacity:.9}
         <article class="item" style="--c:var(--cobalt)"><h3>Retro games</h3><p>Cartridges, discs and complete-in-box classics, tested before they hit the shelf.</p></article>
         <article class="item" style="--c:var(--pink)"><h3>New releases</h3><p>Current-gen games for every major console, new and used.</p></article>
         <article class="item" style="--c:var(--mint)"><h3>Consoles and accessories</h3><p>Systems old and new, controllers, cables and replacement parts.</p></article>
-        <article class="item" style="--c:var(--sticker)"><h3>Trading cards</h3><p>Magic: The Gathering, Pokémon, Yu-Gi-Oh! and Lorcana. Sealed product, singles and supplies.</p></article>
-        <article class="item" style="--c:var(--cobalt)"><h3>Warhammer</h3><p>Miniatures, paints and starter sets for new and returning hobbyists.</p></article>
-        <article class="item" style="--c:var(--pink)"><h3>Collectibles and electronics</h3><p>Action figures, laptops, phones and TVs. Ask about our loan options.</p></article>
+        <article class="item" style="--c:var(--sticker)"><h3>Trading cards</h3><p>Magic: The Gathering, Pokémon, Yu-Gi-Oh!, Lorcana and Digimon. Sealed product, singles and supplies.</p></article>
+        <article class="item" style="--c:var(--cobalt)"><h3>Warhammer</h3><p>Warhammer 40k and Age of Sigmar miniatures, paints and starter sets.</p></article>
+        <article class="item" style="--c:var(--pink)"><h3>Collectibles and electronics</h3><p>Vintage collectibles like Masters of the Universe, action figures and used electronics.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="photos" class="photos-section">
+    <div class="wrap">
+      <h2>Inside the shop</h2>
+      <p class="lede">A look at the shelves, the tables and the conventions we bring the shop to.</p>
+      <!-- To add a photo: replace the <span> inside a .photo with <img src="your-photo.jpg" alt="Short description"> -->
+      <div class="gallery">
+        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Storefront on North Front St</span></figure>
+        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>The retro game wall</span></figure>
+        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Sunday Commander tables</span></figure>
+        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Our Fan Expo booth</span></figure>
       </div>
     </div>
   </section>
 
   <section id="events" class="events-section">
     <div class="wrap">
-      <h2>Play here this week</h2>
+      <h2>Play here</h2>
       <p class="lede">New players are always welcome. Bring a deck or borrow one, and ask staff to walk you through your first game.</p>
-      <div class="chips" role="group" aria-label="Filter events by game" id="chips"></div>
-      <div class="days" id="eventList" aria-live="polite"></div>
-      <p class="note">Prereleases and set championships are announced on our <a href="https://www.facebook.com/PmarketGames127">Facebook page</a>. Seats fill up, so call ahead to reserve.</p>
+      <div class="days" id="eventList"></div>
+      <h3 style="margin-top:32px">Also played here</h3>
+      <ul class="chips" aria-label="Other games with events">
+        <li>Pokémon</li><li>Yu-Gi-Oh!</li><li>Lorcana</li><li>Digimon</li><li>Warhammer 40k</li>
+      </ul>
+      <p class="note">Tournament dates change with each new set. Check our <a href="https://www.facebook.com/PmarketGames127">Facebook page</a> or call for this month's schedule. Seats fill up, so call ahead to reserve.</p>
     </div>
   </section>
 
@@ -315,6 +341,7 @@ footer a{opacity:.9}
         <div class="panel">
           <h3>Hours</h3>
           <table id="hoursTable" aria-label="Store hours"></table>
+          <p class="note">Holiday hours may differ. Call to confirm.</p>
           <a class="btn" href="tel:+16137790957">Call the store</a>
         </div>
         <div class="panel">
@@ -331,24 +358,24 @@ footer a{opacity:.9}
 
 <footer>
   <div class="wrap">
-    <span>© P-Market Games, Belleville, Ontario</span>
+    <span>© P Market Games, Belleville, Ontario</span>
     <a href="tel:+16137790957">613-779-0957</a>
   </div>
 </footer>
 
 <script>
 /* ===== Edit store details here ===== */
-// Hours: [open, close] in 24h time, or null if closed. PLACEHOLDER — confirm with store.
+// Hours: [open, close] in 24h time, or null if closed. From online listings (10 to 6 daily). Confirm with the store.
 const HOURS = {0:[10,18],1:[10,18],2:[10,18],3:[10,18],4:[10,18],5:[10,18],6:[10,18]};
 
-// Weekly events. PLACEHOLDER times and fees — confirm with store.
-const EVENTS = [
-  {day:2, game:"Yu-Gi-Oh!", name:"Yu-Gi-Oh! Locals",       time:"6:00 pm", fee:"Entry fee TBC",       detail:"Advanced format, prizes in store credit."},
-  {day:3, game:"Pokémon",   name:"Pokémon League",         time:"5:30 pm", fee:"Free",                detail:"Casual play and trading. Great for kids and new players."},
-  {day:4, game:"Warhammer", name:"Warhammer Hobby Night",  time:"5:00 pm", fee:"Free",                detail:"Bring your army or paint at the tables."},
-  {day:5, game:"Magic",     name:"Friday Night Magic",     time:"6:30 pm", fee:"Entry fee TBC",       detail:"Weekly Magic for all skill levels, prizes in store credit."},
-  {day:6, game:"Lorcana",   name:"Lorcana Saturday",       time:"1:00 pm", fee:"Entry fee TBC",       detail:"Constructed play with prize support."},
-  {day:0, game:"Magic",     name:"Commander Funday",       time:"12:00 pm",fee:"Up to 24 players",    detail:"Casual four-player Commander pods."}
+// Weekly events (confirmed on the Wizards event locator, Oct 2026).
+const WEEKLY = [
+  {day:0, hour:11, time:"11:00 am", game:"Magic", name:"Commander Funday", detail:"Casual four-player Commander pods. Up to 24 players."}
+];
+// One-off events. Each disappears from the site after its date.
+const SPECIALS = [
+  {date:"2026-11-07", hour:11, time:"11:00 am", game:"Magic", name:"Star Trek Prerelease", detail:"Magic: The Gathering prerelease. Up to 24 players. Call to reserve a seat."},
+  {date:"2026-11-08", hour:11, time:"11:00 am", game:"Magic", name:"Star Trek Prerelease", detail:"Second prerelease day. Up to 24 players. Call to reserve a seat."}
 ];
 /* =================================== */
 
@@ -376,39 +403,45 @@ const fmt = h => { const ap = h>=12?"pm":"am"; const hh = h%12||12; return hh+":
   });
 })();
 
-// Events with filter, ordered starting from today
-(function(){
-  const games=["All",...new Set(EVENTS.map(e=>e.game))];
-  const chips=document.getElementById("chips"), list=document.getElementById("eventList");
-  let active="All";
-  const today=new Date().getDay();
-  function render(){
-    const rows=EVENTS.filter(e=>active==="All"||e.game===active)
-      .sort((a,b)=>((a.day-today+7)%7)-((b.day-today+7)%7));
-    list.innerHTML = rows.length ? "" : '<p class="empty">No events for this game this week. Check Facebook for specials.</p>';
-    rows.forEach(e=>{
-      const off=(e.day-today+7)%7;
-      const el=document.createElement("article"); el.className="ev"; el.style.setProperty("--g",COLORS[e.game]||"#1b36c9");
-      el.innerHTML='<div class="ev-day">'+DAY[e.day].slice(0,3)+'<small>'+(off===0?"Today":off===1?"Tomorrow":e.time)+'</small></div>'+
-        '<div><h3>'+e.name+'</h3><p>'+e.time+'. '+e.detail+'</p><span class="fee">'+e.fee+'</span></div>';
-      list.appendChild(el);
-    });
-  }
-  games.forEach(g=>{
-    const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=g;
-    b.setAttribute("aria-pressed", g===active);
-    b.onclick=()=>{active=g; chips.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",c.textContent===g)); render();};
-    chips.appendChild(b);
+// Upcoming events: weekly ones plus specials, soonest first
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function upcoming(){
+  const now=new Date(), out=[];
+  WEEKLY.forEach(e=>{
+    const d=new Date(now); d.setHours(e.hour,0,0,0);
+    let add=(e.day-now.getDay()+7)%7; d.setDate(d.getDate()+add);
+    if(d<now) d.setDate(d.getDate()+7);
+    out.push(Object.assign({when:d,weekly:true},e));
   });
-  render();
+  SPECIALS.forEach(e=>{
+    const [y,m,dd]=e.date.split("-").map(Number); const d=new Date(y,m-1,dd,e.hour);
+    const end=new Date(y,m-1,dd,23,59);
+    if(end>=now && d-now<1000*60*60*24*60) out.push(Object.assign({when:d,weekly:false},e));
+  });
+  return out.sort((a,b)=>a.when-b.when);
+}
+function dayLabel(d){
+  const now=new Date(), t0=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const diff=Math.round((new Date(d.getFullYear(),d.getMonth(),d.getDate())-t0)/864e5);
+  return diff===0?"today":diff===1?"tomorrow":DAY[d.getDay()]+", "+MON[d.getMonth()]+" "+d.getDate();
+}
+(function(){
+  const list=document.getElementById("eventList");
+  upcoming().forEach(e=>{
+    const el=document.createElement("article"); el.className="ev"; el.style.setProperty("--g",COLORS[e.game]||"#1b36c9");
+    const sub = e.weekly ? "Weekly" : MON[e.when.getMonth()]+" "+e.when.getDate();
+    el.innerHTML='<div class="ev-day">'+DAY[e.when.getDay()].slice(0,3)+'<small class="date">'+sub+'</small></div>'+
+      '<div><h3>'+e.name+'</h3><p>'+(e.weekly?"Every "+DAY[e.day]+" at "+e.time:dayLabel(e.when).replace(/^./,c=>c.toUpperCase())+" at "+e.time)+'. '+e.detail+'</p></div>';
+    list.appendChild(el);
+  });
 })();
 
 // Desktop "today" panel
 (function(){
   const d=new Date().getDay(), v=HOURS[d];
   document.getElementById("todayHours").textContent = v ? fmt(v[0])+" – "+fmt(v[1]) : "Closed today";
-  const next=EVENTS.slice().sort((a,b)=>((a.day-d+7)%7)-((b.day-d+7)%7))[0];
-  if(next){const off=(next.day-d+7)%7; document.getElementById("nextEvent").textContent=next.name+", "+(off===0?"today":off===1?"tomorrow":DAY[next.day])+" at "+next.time;}
+  const next=upcoming()[0];
+  if(next) document.getElementById("nextEvent").textContent=next.name+", "+dayLabel(next.when)+" at "+next.time;
 })();
 
 // Mobile menu
@@ -423,7 +456,7 @@ document.getElementById("quoteForm").addEventListener("submit",e=>{
   e.preventDefault();
   const m=document.getElementById("formMsg");
   m.hidden=false;
-  m.textContent="Demo only: this form isn't connected yet. On the live site it would send the request to the store.";
+  m.textContent="This form isn't connected yet. Once the site goes live, your request will go straight to the store. For now, please call 613-779-0957.";
 });
 </script>
 </body>
