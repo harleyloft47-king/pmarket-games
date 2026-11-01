@@ -164,8 +164,17 @@ section{padding:64px 0}
 .gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (min-width:860px){.gallery{grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}}
 .photo{margin:0;aspect-ratio:4/3;max-width:100%;border-radius:var(--radius-lg);border:2px dashed var(--line);background:var(--card);display:grid;place-items:center;overflow:hidden;text-align:center;color:var(--muted);font-size:14px;font-weight:700;padding:12px}
-.photo span{display:grid;justify-items:center;gap:8px}
-.photo svg{width:28px;height:28px;fill:currentColor;opacity:.6}
+.photo{position:relative;padding:0}
+.photo-add{all:unset;box-sizing:border-box;width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:6px;padding:12px;cursor:pointer;text-align:center;color:var(--muted);font-weight:700;font-size:14px;border-radius:inherit}
+.photo-add small{font-weight:400;font-size:12px}
+.photo-add:hover{color:var(--ink);background:var(--paper)}
+.photo-add:focus-visible{outline:3px solid var(--pink);outline-offset:-3px}
+.photo-tools{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:6px;justify-content:flex-end}
+.photo-tools button{white-space:nowrap;border:0;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:rgba(10,12,30,.78);color:#fff}
+.photo figcaption{position:absolute;left:8px;top:8px;padding:3px 9px;border-radius:999px;background:rgba(10,12,30,.7);color:#fff;font-size:12px;font-weight:700}
+.photo input[type=file]{display:none}
+@media (max-width:520px){.gallery{grid-template-columns:1fr}.photo{aspect-ratio:16/10}}
+.photo svg{width:30px;height:30px;fill:currentColor;opacity:.6}
 .photo img{width:100%;height:100%;object-fit:cover;display:block}
 .photo:has(img){border:0;padding:0}
 .ev-day small.date{font-size:11px}
@@ -362,13 +371,8 @@ footer a{opacity:.9}
     <div class="wrap">
       <h2>Inside the shop</h2>
       <p class="lede">A look at the shelves, the tables and the conventions we bring the shop to.</p>
-      <!-- To add a photo: replace the <span> inside a .photo with <img src="your-photo.jpg" alt="Short description"> -->
-      <div class="gallery">
-        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Storefront on North Front St</span></figure>
-        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>The retro game wall</span></figure>
-        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Sunday Commander tables</span></figure>
-        <figure class="photo"><span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>Our Fan Expo booth</span></figure>
-      </div>
+      <div class="gallery" id="gallery"></div>
+      <p class="note">Tap a spot to add a photo from your phone or computer. Photos added here are saved on this device.</p>
     </div>
   </section>
 
@@ -552,6 +556,65 @@ function dayLabel(d){
     });
     wrap.appendChild(b);
   });
+})();
+
+// Photo gallery. Put a file name in "src" to show a permanent photo for everyone (e.g. "images/storefront.jpg").
+// Photos added by tapping a spot are shrunk and saved on that device only.
+const PHOTOS = [
+  {label:"Storefront on North Front St", src:""},
+  {label:"The retro game wall", src:""},
+  {label:"Sunday Commander tables", src:""},
+  {label:"Our Fan Expo booth", src:""}
+];
+(function(){
+  const gal=document.getElementById("gallery");
+  const CAM='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7.2 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3.2L15 4zm3 4.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z"/></svg>';
+  const key=i=>"pm-photo-"+i;
+  const load=i=>{try{return localStorage.getItem(key(i));}catch(e){return null;}};
+  function shrink(file){
+    return new Promise((res,rej)=>{
+      const url=URL.createObjectURL(file), im=new Image();
+      im.onload=()=>{ const max=1200, sc=Math.min(1,max/Math.max(im.width,im.height));
+        const c=document.createElement("canvas"); c.width=Math.round(im.width*sc); c.height=Math.round(im.height*sc);
+        c.getContext("2d").drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(url); res(c.toDataURL("image/jpeg",.8)); };
+      im.onerror=()=>{URL.revokeObjectURL(url); rej(new Error("That file isn't an image this browser can open. Try a JPG or PNG."));};
+      im.src=url;
+    });
+  }
+  function render(i){
+    const ph=PHOTOS[i], fig=gal.children[i], local=load(i), src=local||ph.src;
+    fig.innerHTML="";
+    const input=document.createElement("input"); input.type="file"; input.accept="image/*"; input.id="photoFile"+i;
+    input.addEventListener("change",async()=>{
+      const f=input.files&&input.files[0]; if(!f) return;
+      try{ const data=await shrink(f);
+        try{ localStorage.setItem(key(i),data); render(i); }
+        catch(e){ showTemp(i,data); }
+      }catch(err){ alertBox(fig,err.message); }
+    });
+    if(src){
+      fig.style.border="0";
+      const img=document.createElement("img"); img.src=src; img.alt=ph.label; fig.appendChild(img);
+      const cap=document.createElement("figcaption"); cap.textContent=ph.label; fig.appendChild(cap);
+      const tools=document.createElement("div"); tools.className="photo-tools";
+      const ch=document.createElement("button"); ch.type="button"; ch.textContent="Change photo"; ch.onclick=()=>input.click(); tools.appendChild(ch);
+      if(local){ const rm=document.createElement("button"); rm.type="button"; rm.textContent="Remove"; rm.onclick=()=>{try{localStorage.removeItem(key(i));}catch(e){} render(i);}; tools.appendChild(rm); }
+      fig.appendChild(tools);
+    } else {
+      fig.style.border="";
+      const b=document.createElement("button"); b.type="button"; b.className="photo-add";
+      b.innerHTML=CAM+'<span>'+ph.label+'</span><small>Tap to add a photo</small>'; b.onclick=()=>input.click();
+      fig.appendChild(b);
+    }
+    fig.appendChild(input);
+  }
+  function showTemp(i,data){ // storage full: show it for now without saving
+    const fig=gal.children[i]; fig.querySelector(".photo-add")?.remove(); fig.style.border="0";
+    const img=document.createElement("img"); img.src=data; img.alt=PHOTOS[i].label; fig.prepend(img);
+    alertBox(fig,"Shown for now, but this device is out of space to save it.");
+  }
+  function alertBox(fig,msg){ const n=document.createElement("figcaption"); n.textContent=msg; n.style.top="auto"; n.style.bottom="48px"; fig.appendChild(n); setTimeout(()=>n.remove(),5000); }
+  PHOTOS.forEach((p,i)=>{ const f=document.createElement("figure"); f.className="photo"; gal.appendChild(f); render(i); });
 })();
 
 // Desktop "today" panel
