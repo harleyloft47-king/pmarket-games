@@ -35,6 +35,8 @@
   --tint1:16,35,127;
   --tint2:27,54,201;
   --tag-ink:#14142b;
+  --sticker-ink:#14142b;
+  --pink-ink:#ffffff;
   --radius-sm:6px;
   --radius-lg:18px;
 }
@@ -76,7 +78,7 @@ section{padding:64px 0}
 .nav{display:none;gap:22px;margin-left:auto}
 .nav a{text-decoration:none;font-weight:700;font-size:15px;opacity:.9}
 .nav a:hover{opacity:1;text-decoration:underline}
-.call{margin-left:auto;background:var(--sticker);color:#14142b;font-weight:700;text-decoration:none;padding:9px 14px;border-radius:999px;font-size:15px;white-space:nowrap}
+.call{margin-left:auto;background:var(--sticker);color:var(--sticker-ink);font-weight:700;text-decoration:none;padding:9px 14px;border-radius:999px;font-size:15px;white-space:nowrap}
 .menu-btn{background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;border-radius:10px;width:44px;height:40px;display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
 .menu-btn svg{width:20px;height:20px}
 .mobile-nav{display:none;background:var(--cobalt-deep);border-top:1px solid rgba(255,255,255,.15)}
@@ -101,10 +103,10 @@ section{padding:64px 0}
 .tagline{font-family:"Archivo",sans-serif;font-stretch:115%;font-weight:800;font-size:clamp(22px,4.4vw,36px);line-height:1.1;margin:0 0 22px;max-width:22ch}
 .hero p{font-size:19px;max-width:44ch;margin:0 0 28px;opacity:.92}
 .tags{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 34px;padding:0;list-style:none}
-.tag{position:relative;background:var(--sticker);color:#14142b;font-family:"Archivo";font-stretch:115%;font-weight:900;font-size:clamp(20px,4.6vw,30px);padding:10px 22px 10px 34px;border-radius:var(--radius-sm) 14px 14px var(--radius-sm);clip-path:polygon(16px 0,100% 0,100% 100%,16px 100%,0 50%);box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.tag{position:relative;background:var(--sticker);color:var(--sticker-ink);font-family:"Archivo";font-stretch:115%;font-weight:900;font-size:clamp(20px,4.6vw,30px);padding:10px 22px 10px 34px;border-radius:var(--radius-sm) 14px 14px var(--radius-sm);clip-path:polygon(16px 0,100% 0,100% 100%,16px 100%,0 50%);box-shadow:0 4px 0 rgba(0,0,0,.25)}
 .tag::before{content:"";position:absolute;left:14px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--cobalt)}
 .tag:nth-child(1){transform:rotate(-3deg)}
-.tag:nth-child(2){transform:rotate(2deg);background:var(--pink);color:#fff}
+.tag:nth-child(2){transform:rotate(2deg);background:var(--pink);color:var(--pink-ink)}
 .tag:nth-child(3){transform:rotate(-1.5deg);background:var(--mint);color:var(--tag-ink)}
 @media (prefers-reduced-motion: no-preference){
   .tag{animation:drop .5s cubic-bezier(.2,1.4,.4,1) backwards}
@@ -186,7 +188,7 @@ section{padding:64px 0}
 @media (min-width:900px){.sell{grid-template-columns:1fr 1.1fr;align-items:start}}
 .steps{list-style:none;margin:0;padding:0;counter-reset:s;display:grid;gap:18px}
 .steps li{counter-increment:s;display:grid;grid-template-columns:44px 1fr;gap:14px}
-.steps li::before{content:counter(s);width:44px;height:44px;border-radius:50%;background:var(--sticker);color:#14142b;font-family:"Archivo";font-weight:900;font-size:20px;display:grid;place-items:center}
+.steps li::before{content:counter(s);width:44px;height:44px;border-radius:50%;background:var(--sticker);color:var(--sticker-ink);font-family:"Archivo";font-weight:900;font-size:20px;display:grid;place-items:center}
 .steps strong{display:block}
 .steps span{color:var(--muted);font-size:16px}
 form{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:22px;display:grid;gap:14px}
@@ -208,6 +210,10 @@ td:last-child{text-align:right}
 tr.today td{font-weight:700;color:var(--cobalt)}
 .panel .btn{background:var(--ink);color:var(--paper);margin-top:14px;margin-right:8px}
 
+.custom{display:grid;gap:6px}
+.custom label{display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px;cursor:pointer;padding:4px 2px}
+.custom input[type=color]{width:40px;height:32px;padding:0;border:2px solid var(--line);border-radius:8px;background:none;cursor:pointer;flex:none}
+.picker-panel{max-height:calc(100vh - 140px);overflow-y:auto}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;border-radius:12px;background:var(--paper);border:1px solid var(--line)}
 .seg-btn{border:0;background:transparent;color:var(--ink);font:inherit;font-weight:700;font-size:14px;padding:8px 4px;border-radius:9px;cursor:pointer}
 .seg-btn[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
@@ -274,6 +280,13 @@ footer a{opacity:.9}
     </div>
     <p class="picker-sub" style="margin-top:6px">Color combinations</p>
     <div id="swatches" style="display:grid;gap:8px"></div>
+    <p class="picker-sub" style="margin-top:6px">Make your own</p>
+    <div class="custom">
+      <label><input type="color" id="cMain" value="#1b36c9">Main color</label>
+      <label><input type="color" id="cTag1" value="#ffd23f">First tag and buttons</label>
+      <label><input type="color" id="cTag2" value="#ff4f8b">Second tag</label>
+      <label><input type="color" id="cTag3" value="#3ee0a7">Third tag</label>
+    </div>
   </div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <a href="#carry">What we carry</a>
@@ -554,9 +567,27 @@ const THEMES = [
   const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
   function apply(i){
     const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
+    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); syncInputs(t.vars);
     list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
     try{localStorage.setItem("pm-theme",String(i));}catch(e){}
   }
+  // Custom colors
+  const hex2rgb=h=>{h=h.replace("#","");return [0,2,4].map(i=>parseInt(h.substr(i,2),16));};
+  const lum=h=>{const c=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
+  const ink=h=>lum(h)>.36?"#14142b":"#ffffff";
+  const darken=(h,f)=>"#"+hex2rgb(h).map(v=>Math.round(v*f).toString(16).padStart(2,"0")).join("");
+  function setInks(a,b,c){root.style.setProperty("--sticker-ink",ink(a));root.style.setProperty("--pink-ink",ink(b));root.style.setProperty("--tag-ink",ink(c));}
+  const inp={main:document.getElementById("cMain"),t1:document.getElementById("cTag1"),t2:document.getElementById("cTag2"),t3:document.getElementById("cTag3")};
+  function syncInputs(v){inp.main.value=v["--cobalt"];inp.t1.value=v["--sticker"];inp.t2.value=v["--pink"];inp.t3.value=v["--mint"];}
+  function applyCustom(save){
+    const m=inp.main.value, d=darken(m,.5);
+    const v={"--cobalt":m,"--cobalt-deep":d,"--sticker":inp.t1.value,"--pink":inp.t2.value,"--mint":inp.t3.value,"--tint1":hex2rgb(d).join(","),"--tint2":hex2rgb(m).join(",")};
+    Object.entries(v).forEach(([k,x])=>root.style.setProperty(k,x));
+    setInks(inp.t1.value,inp.t2.value,inp.t3.value);
+    list.querySelectorAll(".swatch").forEach(b=>b.setAttribute("aria-pressed","false"));
+    if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]));}catch(e){}}
+  }
+  Object.values(inp).forEach(el=>el.addEventListener("input",()=>applyCustom(true)));
   THEMES.forEach((t,i)=>{
     const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.innerHTML=dots(t)+t.name;
     b.addEventListener("click",()=>apply(i)); list.appendChild(b);
@@ -566,8 +597,9 @@ const THEMES = [
     if(o){const nav=document.getElementById("mobileNav"),mb=document.getElementById("menuBtn"); nav.classList.remove("open"); mb.setAttribute("aria-expanded","false");}});
   document.addEventListener("click",e=>{if(!panel.hidden && !panel.contains(e.target) && e.target!==btn) close();});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden){panel.hidden=true;btn.setAttribute("aria-expanded","false");btn.focus();}});
-  let saved=0; try{const v=parseInt(localStorage.getItem("pm-theme"),10); if(v>=0&&v<THEMES.length) saved=v;}catch(e){}
-  apply(saved);
+  let saved=0, custom=null;
+  try{const raw=localStorage.getItem("pm-theme"); if(raw==="custom") custom=JSON.parse(localStorage.getItem("pm-custom")); else {const v=parseInt(raw,10); if(v>=0&&v<THEMES.length) saved=v;}}catch(e){}
+  if(custom&&custom.length===4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; applyCustom(false);} else apply(saved);
 })();
 
 // View switcher: Auto, Phone (a phone-sized preview), Computer (full desktop layout on a phone)
