@@ -208,19 +208,24 @@ td:last-child{text-align:right}
 tr.today td{font-weight:700;color:var(--cobalt)}
 .panel .btn{background:var(--ink);color:var(--paper);margin-top:14px;margin-right:8px}
 
-.picker{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
-.picker-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:11px 16px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.gear-btn{background:transparent;border:2px solid rgba(255,255,255,.5);color:#fff;border-radius:10px;width:44px;height:40px;display:grid;place-items:center;cursor:pointer;flex:none;padding:0}
+.gear-btn svg{width:20px;height:20px;transition:transform .3s}
+.gear-btn[aria-expanded="true"]{background:rgba(255,255,255,.15);border-color:#fff}
+.gear-btn[aria-expanded="true"] svg{transform:rotate(60deg)}
+@media (max-width:340px){.bar .wrap{gap:6px}}
 .dots{display:inline-flex}
 .dots i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.85);margin-left:-4px}
 .dots i:first-child{margin-left:0}
-.picker-panel{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);display:grid;gap:8px;width:min(260px,calc(100vw - 32px))}
+.picker-panel{position:absolute;top:100%;right:max(16px,env(safe-area-inset-right,0px));margin-top:8px;z-index:30;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);display:grid;gap:8px;width:min(260px,calc(100vw - 32px))}
 .picker-panel[hidden]{display:none}
-.picker-panel h2{font-size:17px;font-stretch:110%;margin:0 0 2px}
+.picker-panel h2{font-size:18px;font-stretch:110%;margin:0}
+.picker-sub{margin:0 0 2px;font-size:13px;font-weight:700;color:var(--muted)}
+@media (min-width:1244px){.picker-panel{right:calc((100vw - 1180px)/2 + 32px)}}
 .swatch{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:2px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
 .swatch .dots i{border-color:var(--card);width:18px;height:18px}
 .swatch[aria-pressed="true"]{border-color:var(--ink)}
 .swatch[aria-pressed="true"]::after{content:"✓";margin-left:auto}
-@media print{.picker{display:none}}
+
 footer{background:var(--cobalt-deep);color:#fff;padding:36px 0;font-size:15px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
 footer a{opacity:.9}
@@ -240,9 +245,17 @@ footer a{opacity:.9}
       <a href="#visit">Visit</a>
     </nav>
     <a class="call" href="tel:+16137790957" aria-label="Call 613-779-0957"><span class="lbl">Call 613-779-0957</span><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg></a>
+    <button class="gear-btn" id="pickerBtn" type="button" aria-expanded="false" aria-controls="pickerPanel" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
     <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-controls="mobileNav" aria-label="Open menu">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
     </button>
+  </div>
+  <div class="picker-panel" id="pickerPanel" hidden>
+    <h2>Settings</h2>
+    <p class="picker-sub">Color combinations</p>
+    <div id="swatches" style="display:grid;gap:8px"></div>
   </div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
     <a href="#carry">What we carry</a>
@@ -385,14 +398,6 @@ footer a{opacity:.9}
   </section>
 </main>
 
-<div class="picker" id="picker">
-  <div class="picker-panel" id="pickerPanel" hidden>
-    <h2>Color combinations</h2>
-    <div id="swatches" style="display:grid;gap:8px"></div>
-  </div>
-  <button class="picker-btn" id="pickerBtn" type="button" aria-expanded="false" aria-controls="pickerPanel"><span class="dots" id="pickerDots"></span>Colors</button>
-</div>
-
 <footer>
   <div class="wrap">
     <span>© P Market Games, Belleville, Ontario</span>
@@ -520,11 +525,10 @@ const THEMES = [
   {name:"Midnight",    vars:{"--cobalt":"#2a2c38","--cobalt-deep":"#111219","--sticker":"#ffb000","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"17,18,25","--tint2":"42,44,56","--tag-ink":"#14142b"}}
 ];
 (function(){
-  const root=document.documentElement, btn=document.getElementById("pickerBtn"), panel=document.getElementById("pickerPanel"), list=document.getElementById("swatches"), btnDots=document.getElementById("pickerDots");
+  const root=document.documentElement, btn=document.getElementById("pickerBtn"), panel=document.getElementById("pickerPanel"), list=document.getElementById("swatches");
   const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
   function apply(i){
     const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
-    btnDots.innerHTML=dots(t).replace(/^<span class="dots">|<\/span>$/g,"");
     list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
     try{localStorage.setItem("pm-theme",String(i));}catch(e){}
   }
@@ -532,7 +536,10 @@ const THEMES = [
     const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.innerHTML=dots(t)+t.name;
     b.addEventListener("click",()=>apply(i)); list.appendChild(b);
   });
-  btn.addEventListener("click",()=>{const o=panel.hidden; panel.hidden=!o; btn.setAttribute("aria-expanded",o);});
+  const close=()=>{panel.hidden=true;btn.setAttribute("aria-expanded","false");};
+  btn.addEventListener("click",e=>{e.stopPropagation();const o=panel.hidden; panel.hidden=!o; btn.setAttribute("aria-expanded",o);
+    if(o){const nav=document.getElementById("mobileNav"),mb=document.getElementById("menuBtn"); nav.classList.remove("open"); mb.setAttribute("aria-expanded","false");}});
+  document.addEventListener("click",e=>{if(!panel.hidden && !panel.contains(e.target) && e.target!==btn) close();});
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden){panel.hidden=true;btn.setAttribute("aria-expanded","false");btn.focus();}});
   let saved=0; try{const v=parseInt(localStorage.getItem("pm-theme"),10); if(v>=0&&v<THEMES.length) saved=v;}catch(e){}
   apply(saved);
