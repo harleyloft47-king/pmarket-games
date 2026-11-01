@@ -32,6 +32,9 @@
   --line:#d9dbe4;
   --muted:#565a73;
   --on-cobalt:#ffffff;
+  --tint1:16,35,127;
+  --tint2:27,54,201;
+  --tag-ink:#14142b;
   --radius-sm:6px;
   --radius-lg:18px;
 }
@@ -87,7 +90,7 @@ section{padding:64px 0}
 @media (min-width:860px){.nav{display:flex}.call{margin-left:8px}.menu-btn,.mobile-nav,.mobile-nav.open{display:none}}
 
 /* hero */
-.hero{background-color:var(--cobalt);background-image:linear-gradient(180deg,rgba(16,35,127,.78),rgba(27,54,201,.80) 55%,rgba(16,35,127,.90)),url("images/comic-bg.jpg");background-size:auto,clamp(260px,34vw,420px) auto;background-repeat:no-repeat,repeat;background-position:0 0,center top;color:var(--on-cobalt);padding:44px 0 72px;position:relative;overflow:hidden}
+.hero{background-color:var(--cobalt);background-image:linear-gradient(180deg,rgba(var(--tint1),.78),rgba(var(--tint2),.80) 55%,rgba(var(--tint1),.90)),url("images/comic-bg.jpg");background-size:auto,clamp(260px,34vw,420px) auto;background-repeat:no-repeat,repeat;background-position:0 0,center top;color:var(--on-cobalt);padding:44px 0 72px;position:relative;overflow:hidden}
 .hero h1,.hero .tagline,.hero p{text-shadow:0 2px 12px rgba(8,16,70,.55)}
 .status{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);padding:6px 12px;border-radius:999px;font-size:15px;font-weight:700}
 .dot{width:10px;height:10px;border-radius:50%;background:#aaa}
@@ -102,7 +105,7 @@ section{padding:64px 0}
 .tag::before{content:"";position:absolute;left:14px;top:50%;width:9px;height:9px;margin-top:-4.5px;border-radius:50%;background:var(--cobalt)}
 .tag:nth-child(1){transform:rotate(-3deg)}
 .tag:nth-child(2){transform:rotate(2deg);background:var(--pink);color:#fff}
-.tag:nth-child(3){transform:rotate(-1.5deg);background:var(--mint)}
+.tag:nth-child(3){transform:rotate(-1.5deg);background:var(--mint);color:var(--tag-ink)}
 @media (prefers-reduced-motion: no-preference){
   .tag{animation:drop .5s cubic-bezier(.2,1.4,.4,1) backwards}
   .tag:nth-child(2){animation-delay:.12s}.tag:nth-child(3){animation-delay:.24s}
@@ -205,6 +208,19 @@ td:last-child{text-align:right}
 tr.today td{font-weight:700;color:var(--cobalt)}
 .panel .btn{background:var(--ink);color:var(--paper);margin-top:14px;margin-right:8px}
 
+.picker{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.picker-btn{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--paper);border:0;border-radius:999px;padding:11px 16px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.dots{display:inline-flex}
+.dots i{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.85);margin-left:-4px}
+.dots i:first-child{margin-left:0}
+.picker-panel{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px;box-shadow:0 12px 32px rgba(0,0,0,.28);display:grid;gap:8px;width:min(260px,calc(100vw - 32px))}
+.picker-panel[hidden]{display:none}
+.picker-panel h2{font-size:17px;font-stretch:110%;margin:0 0 2px}
+.swatch{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:2px solid var(--line);border-radius:12px;padding:9px 12px;font:inherit;font-weight:700;font-size:15px;color:var(--ink);cursor:pointer}
+.swatch .dots i{border-color:var(--card);width:18px;height:18px}
+.swatch[aria-pressed="true"]{border-color:var(--ink)}
+.swatch[aria-pressed="true"]::after{content:"✓";margin-left:auto}
+@media print{.picker{display:none}}
 footer{background:var(--cobalt-deep);color:#fff;padding:36px 0;font-size:15px}
 footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
 footer a{opacity:.9}
@@ -369,6 +385,14 @@ footer a{opacity:.9}
   </section>
 </main>
 
+<div class="picker" id="picker">
+  <div class="picker-panel" id="pickerPanel" hidden>
+    <h2>Color combinations</h2>
+    <div id="swatches" style="display:grid;gap:8px"></div>
+  </div>
+  <button class="picker-btn" id="pickerBtn" type="button" aria-expanded="false" aria-controls="pickerPanel"><span class="dots" id="pickerDots"></span>Colors</button>
+</div>
+
 <footer>
   <div class="wrap">
     <span>© P Market Games, Belleville, Ontario</span>
@@ -485,6 +509,33 @@ function dayLabel(d){
   document.getElementById("todayHours").textContent = v ? fmt(v[0])+" – "+fmt(v[1]) : "Closed today";
   const next=upcoming()[0];
   if(next) document.getElementById("nextEvent").textContent=next.name+", "+dayLabel(next.when)+" at "+next.time;
+})();
+
+// Color combinations. Each one swaps the site's main colors.
+const THEMES = [
+  {name:"Cobalt",      vars:{"--cobalt":"#1b36c9","--cobalt-deep":"#10237f","--sticker":"#ffd23f","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"16,35,127","--tint2":"27,54,201","--tag-ink":"#14142b"}},
+  {name:"Arcade",      vars:{"--cobalt":"#6b21d8","--cobalt-deep":"#2e0b66","--sticker":"#39f0ff","--pink":"#ff3db8","--mint":"#b6ff3c","--tint1":"46,11,102","--tint2":"107,33,216","--tag-ink":"#14142b"}},
+  {name:"Retro Red",   vars:{"--cobalt":"#c8102e","--cobalt-deep":"#6e0716","--sticker":"#ffd23f","--pink":"#1b36c9","--mint":"#ffffff","--tint1":"110,7,22","--tint2":"200,16,46","--tag-ink":"#14142b"}},
+  {name:"Goblin Green",vars:{"--cobalt":"#11804a","--cobalt-deep":"#073b22","--sticker":"#ffd23f","--pink":"#ff6b3d","--mint":"#b6ff3c","--tint1":"7,59,34","--tint2":"17,128,74","--tag-ink":"#14142b"}},
+  {name:"Midnight",    vars:{"--cobalt":"#2a2c38","--cobalt-deep":"#111219","--sticker":"#ffb000","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"17,18,25","--tint2":"42,44,56","--tag-ink":"#14142b"}}
+];
+(function(){
+  const root=document.documentElement, btn=document.getElementById("pickerBtn"), panel=document.getElementById("pickerPanel"), list=document.getElementById("swatches"), btnDots=document.getElementById("pickerDots");
+  const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
+  function apply(i){
+    const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
+    btnDots.innerHTML=dots(t).replace(/^<span class="dots">|<\/span>$/g,"");
+    list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
+    try{localStorage.setItem("pm-theme",String(i));}catch(e){}
+  }
+  THEMES.forEach((t,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.innerHTML=dots(t)+t.name;
+    b.addEventListener("click",()=>apply(i)); list.appendChild(b);
+  });
+  btn.addEventListener("click",()=>{const o=panel.hidden; panel.hidden=!o; btn.setAttribute("aria-expanded",o);});
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden){panel.hidden=true;btn.setAttribute("aria-expanded","false");btn.focus();}});
+  let saved=0; try{const v=parseInt(localStorage.getItem("pm-theme"),10); if(v>=0&&v<THEMES.length) saved=v;}catch(e){}
+  apply(saved);
 })();
 
 // Mobile menu
