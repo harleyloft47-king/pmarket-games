@@ -286,6 +286,7 @@ footer a{opacity:.9}
       <label><input type="color" id="cTag1" value="#ffd23f">First tag and buttons</label>
       <label><input type="color" id="cTag2" value="#ff4f8b">Second tag</label>
       <label><input type="color" id="cTag3" value="#3ee0a7">Third tag</label>
+      <label><input type="color" id="cPage" value="#f2f3f6">Page background</label>
     </div>
   </div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
@@ -557,17 +558,17 @@ function dayLabel(d){
 // Color combinations. Each one swaps the site's main colors.
 const THEMES = [
   {name:"Cobalt",      vars:{"--cobalt":"#1b36c9","--cobalt-deep":"#10237f","--sticker":"#ffd23f","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"16,35,127","--tint2":"27,54,201","--tag-ink":"#14142b"}},
-  {name:"Arcade",      vars:{"--cobalt":"#6b21d8","--cobalt-deep":"#2e0b66","--sticker":"#39f0ff","--pink":"#ff3db8","--mint":"#b6ff3c","--tint1":"46,11,102","--tint2":"107,33,216","--tag-ink":"#14142b"}},
-  {name:"Retro Red",   vars:{"--cobalt":"#c8102e","--cobalt-deep":"#6e0716","--sticker":"#ffd23f","--pink":"#1b36c9","--mint":"#ffffff","--tint1":"110,7,22","--tint2":"200,16,46","--tag-ink":"#14142b"}},
-  {name:"Goblin Green",vars:{"--cobalt":"#11804a","--cobalt-deep":"#073b22","--sticker":"#ffd23f","--pink":"#ff6b3d","--mint":"#b6ff3c","--tint1":"7,59,34","--tint2":"17,128,74","--tag-ink":"#14142b"}},
-  {name:"Midnight",    vars:{"--cobalt":"#2a2c38","--cobalt-deep":"#111219","--sticker":"#ffb000","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"17,18,25","--tint2":"42,44,56","--tag-ink":"#14142b"}}
+  {name:"Arcade",      vars:{"--cobalt":"#6b21d8","--cobalt-deep":"#2e0b66","--sticker":"#39f0ff","--pink":"#ff3db8","--mint":"#b6ff3c","--tint1":"46,11,102","--tint2":"107,33,216","--tag-ink":"#14142b"}, page:"#170b33"},
+  {name:"Retro Red",   vars:{"--cobalt":"#c8102e","--cobalt-deep":"#6e0716","--sticker":"#ffd23f","--pink":"#1b36c9","--mint":"#ffffff","--tint1":"110,7,22","--tint2":"200,16,46","--tag-ink":"#14142b"}, page:"#fff3dc"},
+  {name:"Goblin Green",vars:{"--cobalt":"#11804a","--cobalt-deep":"#073b22","--sticker":"#ffd23f","--pink":"#ff6b3d","--mint":"#b6ff3c","--tint1":"7,59,34","--tint2":"17,128,74","--tag-ink":"#14142b"}, page:"#e6f2e2"},
+  {name:"Midnight",    vars:{"--cobalt":"#2a2c38","--cobalt-deep":"#111219","--sticker":"#ffb000","--pink":"#ff4f8b","--mint":"#3ee0a7","--tint1":"17,18,25","--tint2":"42,44,56","--tag-ink":"#14142b"}, page:"#15161d"}
 ];
 (function(){
   const root=document.documentElement, btn=document.getElementById("pickerBtn"), panel=document.getElementById("pickerPanel"), list=document.getElementById("swatches");
   const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
   function apply(i){
     const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
-    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); syncInputs(t.vars);
+    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); setPage(t.page||null); syncInputs(t.vars); inp.page.value=t.page||"#f2f3f6";
     list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
     try{localStorage.setItem("pm-theme",String(i));}catch(e){}
   }
@@ -576,16 +577,29 @@ const THEMES = [
   const lum=h=>{const c=hex2rgb(h).map(v=>{v/=255;return v<=.03928?v/12.92:Math.pow((v+.055)/1.055,2.4)});return .2126*c[0]+.7152*c[1]+.0722*c[2];};
   const ink=h=>lum(h)>.36?"#14142b":"#ffffff";
   const darken=(h,f)=>"#"+hex2rgb(h).map(v=>Math.round(v*f).toString(16).padStart(2,"0")).join("");
+  const mix=(a,b,t)=>"#"+hex2rgb(a).map((v,i)=>Math.round(v+(hex2rgb(b)[i]-v)*t).toString(16).padStart(2,"0")).join("");
+  const PAGE_KEYS=["--paper","--card","--ink","--line","--muted"];
+  function setPage(hex){
+    if(!hex){ PAGE_KEYS.forEach(k=>root.style.removeProperty(k)); root.style.removeProperty("color-scheme"); return; }
+    const dark=lum(hex)<.18, ink=dark?"#eef0ff":"#14142b";
+    const v={"--paper":hex,"--ink":ink,
+      "--card":dark?mix(hex,"#ffffff",.07):mix(hex,"#ffffff",.65),
+      "--line":dark?mix(hex,"#ffffff",.18):mix(hex,"#14142b",.14),
+      "--muted":mix(ink,hex,.32)};
+    Object.entries(v).forEach(([k,x])=>root.style.setProperty(k,x));
+    root.style.setProperty("color-scheme",dark?"dark":"light");
+  }
   function setInks(a,b,c){root.style.setProperty("--sticker-ink",ink(a));root.style.setProperty("--pink-ink",ink(b));root.style.setProperty("--tag-ink",ink(c));}
-  const inp={main:document.getElementById("cMain"),t1:document.getElementById("cTag1"),t2:document.getElementById("cTag2"),t3:document.getElementById("cTag3")};
+  const inp={main:document.getElementById("cMain"),t1:document.getElementById("cTag1"),t2:document.getElementById("cTag2"),t3:document.getElementById("cTag3"),page:document.getElementById("cPage")};
   function syncInputs(v){inp.main.value=v["--cobalt"];inp.t1.value=v["--sticker"];inp.t2.value=v["--pink"];inp.t3.value=v["--mint"];}
   function applyCustom(save){
     const m=inp.main.value, d=darken(m,.5);
     const v={"--cobalt":m,"--cobalt-deep":d,"--sticker":inp.t1.value,"--pink":inp.t2.value,"--mint":inp.t3.value,"--tint1":hex2rgb(d).join(","),"--tint2":hex2rgb(m).join(",")};
     Object.entries(v).forEach(([k,x])=>root.style.setProperty(k,x));
     setInks(inp.t1.value,inp.t2.value,inp.t3.value);
+    setPage(inp.page.value);
     list.querySelectorAll(".swatch").forEach(b=>b.setAttribute("aria-pressed","false"));
-    if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]));}catch(e){}}
+    if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value,inp.page.value]));}catch(e){}}
   }
   Object.values(inp).forEach(el=>el.addEventListener("input",()=>applyCustom(true)));
   THEMES.forEach((t,i)=>{
@@ -599,7 +613,7 @@ const THEMES = [
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden){panel.hidden=true;btn.setAttribute("aria-expanded","false");btn.focus();}});
   let saved=0, custom=null;
   try{const raw=localStorage.getItem("pm-theme"); if(raw==="custom") custom=JSON.parse(localStorage.getItem("pm-custom")); else {const v=parseInt(raw,10); if(v>=0&&v<THEMES.length) saved=v;}}catch(e){}
-  if(custom&&custom.length===4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; applyCustom(false);} else apply(saved);
+  if(custom&&custom.length>=4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; if(custom[4]) inp.page.value=custom[4]; applyCustom(false);} else apply(saved);
 })();
 
 // View switcher: Auto, Phone (a phone-sized preview), Computer (full desktop layout on a phone)
