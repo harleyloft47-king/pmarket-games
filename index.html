@@ -283,17 +283,17 @@ footer a{opacity:.9}
         <button type="button" class="seg-btn" data-view="computer" aria-pressed="false">Computer</button>
       </div>
     </div>
-    <p class="picker-sub" style="margin-top:6px">Color combinations</p>
+    <p class="picker-sub" style="margin-top:6px">Top colors</p>
     <div id="swatches" style="display:grid;gap:8px"></div>
-    <p class="picker-sub" style="margin-top:6px">Page colors</p>
+    <p class="picker-sub" style="margin-top:6px">Bottom colors</p>
     <div class="pages" id="pageSwatches"></div>
     <p class="picker-sub" style="margin-top:6px">Make your own</p>
     <div class="custom">
-      <label><input type="color" id="cMain" value="#1b36c9">Main color</label>
+      <label><input type="color" id="cMain" value="#1b36c9">Top main color</label>
       <label><input type="color" id="cTag1" value="#ffd23f">First tag and buttons</label>
       <label><input type="color" id="cTag2" value="#ff4f8b">Second tag</label>
       <label><input type="color" id="cTag3" value="#3ee0a7">Third tag</label>
-      <label><input type="color" id="cPage" value="#f2f3f6">Page background</label>
+      <label><input type="color" id="cPage" value="#f2f3f6">Bottom background</label>
     </div>
   </div>
   <nav class="mobile-nav" id="mobileNav" aria-label="Mobile">
@@ -575,7 +575,7 @@ const THEMES = [
   const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
   function apply(i){
     const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
-    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); setPage(t.page||null); syncInputs(t.vars); inp.page.value=t.page||"#f2f3f6"; if(typeof markPage==="function") markPage(t.page||"#f2f3f6");
+    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); syncInputs(t.vars);
     list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
     try{localStorage.setItem("pm-theme",String(i));}catch(e){}
   }
@@ -604,14 +604,14 @@ const THEMES = [
     const v={"--cobalt":m,"--cobalt-deep":d,"--sticker":inp.t1.value,"--pink":inp.t2.value,"--mint":inp.t3.value,"--tint1":hex2rgb(d).join(","),"--tint2":hex2rgb(m).join(",")};
     Object.entries(v).forEach(([k,x])=>root.style.setProperty(k,x));
     setInks(inp.t1.value,inp.t2.value,inp.t3.value);
-    setPage(inp.page.value); markPage(inp.page.value);
     list.querySelectorAll(".swatch").forEach(b=>b.setAttribute("aria-pressed","false"));
-    if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value,inp.page.value]));}catch(e){}}
+    if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]));}catch(e){}}
   }
-  Object.values(inp).forEach(el=>el.addEventListener("input",()=>applyCustom(true)));
+  [inp.main,inp.t1,inp.t2,inp.t3].forEach(el=>el.addEventListener("input",()=>applyCustom(true)));
+  inp.page.addEventListener("input",()=>{ setPage(inp.page.value); markPage(inp.page.value); try{localStorage.setItem("pm-page",inp.page.value);}catch(e){} });
   THEMES.forEach((t,i)=>{
     const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.innerHTML=dots(t)+t.name;
-    b.addEventListener("click",()=>{ apply(i); try{localStorage.removeItem("pm-page");}catch(e){} }); list.appendChild(b);
+    b.addEventListener("click",()=>apply(i)); list.appendChild(b);
   });
   const close=()=>{panel.hidden=true;btn.setAttribute("aria-expanded","false");};
   // Page color presets (bottom half of the site)
@@ -636,8 +636,9 @@ const THEMES = [
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!panel.hidden){panel.hidden=true;btn.setAttribute("aria-expanded","false");btn.focus();}});
   let saved=0, custom=null;
   try{const raw=localStorage.getItem("pm-theme"); if(raw==="custom") custom=JSON.parse(localStorage.getItem("pm-custom")); else {const v=parseInt(raw,10); if(v>=0&&v<THEMES.length) saved=v;}}catch(e){}
-  if(custom&&custom.length>=4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; if(custom[4]) inp.page.value=custom[4]; applyCustom(false);} else apply(saved);
-  try{const pgSaved=localStorage.getItem("pm-page"); if(pgSaved && /^#[0-9a-f]{6}$/i.test(pgSaved)){ setPage(pgSaved); inp.page.value=pgSaved; markPage(pgSaved); }}catch(e){}
+  if(custom&&custom.length>=4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; applyCustom(false);} else apply(saved);
+  let pgSaved=null; try{const v=localStorage.getItem("pm-page"); if(v && /^#[0-9a-f]{6}$/i.test(v)) pgSaved=v;}catch(e){}
+  if(pgSaved){ setPage(pgSaved); inp.page.value=pgSaved; markPage(pgSaved); } else { setPage(null); inp.page.value="#f2f3f6"; markPage("#f2f3f6"); }
 })();
 
 // View switcher: Auto, Phone (a phone-sized preview), Computer (full desktop layout on a phone)
