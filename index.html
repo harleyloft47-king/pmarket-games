@@ -210,6 +210,11 @@ td:last-child{text-align:right}
 tr.today td{font-weight:700;color:var(--cobalt)}
 .panel .btn{background:var(--ink);color:var(--paper);margin-top:14px;margin-right:8px}
 
+.pages{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pswatch{display:flex;align-items:center;gap:8px;border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:6px 8px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;text-align:left;min-width:0}
+.pswatch .chipbox{width:26px;height:20px;border-radius:5px;flex:none;border:1px solid rgba(128,128,128,.45);display:grid;place-items:center}
+.pswatch .chipbox i{width:12px;height:8px;border-radius:2px}
+.pswatch[aria-pressed="true"]{border-color:var(--ink);background:var(--paper)}
 .custom{display:grid;gap:6px}
 .custom label{display:flex;align-items:center;gap:12px;font-weight:700;font-size:14px;cursor:pointer;padding:4px 2px}
 .custom input[type=color]{width:40px;height:32px;padding:0;border:2px solid var(--line);border-radius:8px;background:none;cursor:pointer;flex:none}
@@ -280,6 +285,8 @@ footer a{opacity:.9}
     </div>
     <p class="picker-sub" style="margin-top:6px">Color combinations</p>
     <div id="swatches" style="display:grid;gap:8px"></div>
+    <p class="picker-sub" style="margin-top:6px">Page colors</p>
+    <div class="pages" id="pageSwatches"></div>
     <p class="picker-sub" style="margin-top:6px">Make your own</p>
     <div class="custom">
       <label><input type="color" id="cMain" value="#1b36c9">Main color</label>
@@ -568,7 +575,7 @@ const THEMES = [
   const dots=t=>'<span class="dots"><i style="background:'+t.vars["--cobalt"]+'"></i><i style="background:'+t.vars["--sticker"]+'"></i><i style="background:'+t.vars["--pink"]+'"></i></span>';
   function apply(i){
     const t=THEMES[i]; Object.entries(t.vars).forEach(([k,v])=>root.style.setProperty(k,v));
-    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); setPage(t.page||null); syncInputs(t.vars); inp.page.value=t.page||"#f2f3f6";
+    setInks(t.vars["--sticker"],t.vars["--pink"],t.vars["--mint"]); setPage(t.page||null); syncInputs(t.vars); inp.page.value=t.page||"#f2f3f6"; if(typeof markPage==="function") markPage(t.page||"#f2f3f6");
     list.querySelectorAll(".swatch").forEach((b,j)=>b.setAttribute("aria-pressed",j===i));
     try{localStorage.setItem("pm-theme",String(i));}catch(e){}
   }
@@ -597,16 +604,32 @@ const THEMES = [
     const v={"--cobalt":m,"--cobalt-deep":d,"--sticker":inp.t1.value,"--pink":inp.t2.value,"--mint":inp.t3.value,"--tint1":hex2rgb(d).join(","),"--tint2":hex2rgb(m).join(",")};
     Object.entries(v).forEach(([k,x])=>root.style.setProperty(k,x));
     setInks(inp.t1.value,inp.t2.value,inp.t3.value);
-    setPage(inp.page.value);
+    setPage(inp.page.value); markPage(inp.page.value);
     list.querySelectorAll(".swatch").forEach(b=>b.setAttribute("aria-pressed","false"));
     if(save){try{localStorage.setItem("pm-theme","custom");localStorage.setItem("pm-custom",JSON.stringify([inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value,inp.page.value]));}catch(e){}}
   }
   Object.values(inp).forEach(el=>el.addEventListener("input",()=>applyCustom(true)));
   THEMES.forEach((t,i)=>{
     const b=document.createElement("button"); b.type="button"; b.className="swatch"; b.innerHTML=dots(t)+t.name;
-    b.addEventListener("click",()=>apply(i)); list.appendChild(b);
+    b.addEventListener("click",()=>{ apply(i); try{localStorage.removeItem("pm-page");}catch(e){} }); list.appendChild(b);
   });
   const close=()=>{panel.hidden=true;btn.setAttribute("aria-expanded","false");};
+  // Page color presets (bottom half of the site)
+  const PAGES=[
+    {name:"Light grey",hex:"#f2f3f6"},{name:"Comic paper",hex:"#fff3dc"},
+    {name:"Mint",hex:"#e6f2e2"},{name:"Lavender",hex:"#ece8fb"},
+    {name:"Sky",hex:"#e3f0fb"},{name:"Navy night",hex:"#0f1a3d"},
+    {name:"Purple night",hex:"#170b33"},{name:"Charcoal",hex:"#15161d"}
+  ];
+  const plist=document.getElementById("pageSwatches");
+  function markPage(hex){ plist.querySelectorAll(".pswatch").forEach(b=>b.setAttribute("aria-pressed", !!hex && b.dataset.hex===hex.toLowerCase())); }
+  PAGES.forEach(pg=>{
+    const dark=lum(pg.hex)<.18, card=dark?mix(pg.hex,"#ffffff",.07):mix(pg.hex,"#ffffff",.65);
+    const b=document.createElement("button"); b.type="button"; b.className="pswatch"; b.dataset.hex=pg.hex;
+    b.innerHTML='<span class="chipbox" style="background:'+pg.hex+'"><i style="background:'+card+'"></i></span>'+pg.name;
+    b.addEventListener("click",()=>{ setPage(pg.hex); inp.page.value=pg.hex; markPage(pg.hex); try{localStorage.setItem("pm-page",pg.hex);}catch(e){} });
+    plist.appendChild(b);
+  });
   btn.addEventListener("click",e=>{e.stopPropagation();const o=panel.hidden; panel.hidden=!o; btn.setAttribute("aria-expanded",o);
     if(o){const nav=document.getElementById("mobileNav"),mb=document.getElementById("menuBtn"); nav.classList.remove("open"); mb.setAttribute("aria-expanded","false");}});
   document.addEventListener("click",e=>{if(!panel.hidden && !panel.contains(e.target) && e.target!==btn) close();});
@@ -614,6 +637,7 @@ const THEMES = [
   let saved=0, custom=null;
   try{const raw=localStorage.getItem("pm-theme"); if(raw==="custom") custom=JSON.parse(localStorage.getItem("pm-custom")); else {const v=parseInt(raw,10); if(v>=0&&v<THEMES.length) saved=v;}}catch(e){}
   if(custom&&custom.length>=4){[inp.main.value,inp.t1.value,inp.t2.value,inp.t3.value]=custom; if(custom[4]) inp.page.value=custom[4]; applyCustom(false);} else apply(saved);
+  try{const pgSaved=localStorage.getItem("pm-page"); if(pgSaved && /^#[0-9a-f]{6}$/i.test(pgSaved)){ setPage(pgSaved); inp.page.value=pgSaved; markPage(pgSaved); }}catch(e){}
 })();
 
 // View switcher: Auto, Phone (a phone-sized preview), Computer (full desktop layout on a phone)
