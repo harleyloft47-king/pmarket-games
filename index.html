@@ -168,11 +168,13 @@ section{padding:64px 0}
 .photo-add{all:unset;box-sizing:border-box;width:100%;height:100%;display:grid;place-items:center;align-content:center;gap:6px;padding:12px;cursor:pointer;text-align:center;color:var(--muted);font-weight:700;font-size:14px;border-radius:inherit}
 .photo-add small{font-weight:400;font-size:12px}
 .photo-add:hover{color:var(--ink);background:var(--paper)}
-.photo-add:focus-visible{outline:3px solid var(--pink);outline-offset:-3px}
+
 .photo-tools{position:absolute;left:8px;right:8px;bottom:8px;display:flex;gap:6px;justify-content:flex-end}
 .photo-tools button{white-space:nowrap;border:0;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:rgba(10,12,30,.78);color:#fff}
 .photo figcaption{position:absolute;left:8px;top:8px;padding:3px 9px;border-radius:999px;background:rgba(10,12,30,.7);color:#fff;font-size:12px;font-weight:700}
-.photo input[type=file]{display:none}
+.photo input[type=file]{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden;clip:rect(0 0 0 0);pointer-events:none}
+.photo:focus-within{outline:3px solid var(--pink);outline-offset:3px}
+.photo-tools label{border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;cursor:pointer;background:rgba(10,12,30,.78);color:#fff;white-space:nowrap}
 @media (max-width:520px){.gallery{grid-template-columns:1fr}.photo{aspect-ratio:16/10}}
 .photo svg{width:30px;height:30px;fill:currentColor;opacity:.6}
 .photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -584,9 +586,9 @@ const PHOTOS = [
   function render(i){
     const ph=PHOTOS[i], fig=gal.children[i], local=load(i), src=local||ph.src;
     fig.innerHTML="";
-    const input=document.createElement("input"); input.type="file"; input.accept="image/*"; input.id="photoFile"+i;
+    const input=document.createElement("input"); input.type="file"; input.accept="image/*"; input.id="photoFile"+i; input.setAttribute("aria-label","Add a photo: "+ph.label);
     input.addEventListener("change",async()=>{
-      const f=input.files&&input.files[0]; if(!f) return;
+      const f=input.files&&input.files[0]; if(!f) return; input.value="";
       try{ const data=await shrink(f);
         try{ localStorage.setItem(key(i),data); render(i); }
         catch(e){ showTemp(i,data); }
@@ -597,13 +599,13 @@ const PHOTOS = [
       const img=document.createElement("img"); img.src=src; img.alt=ph.label; fig.appendChild(img);
       const cap=document.createElement("figcaption"); cap.textContent=ph.label; fig.appendChild(cap);
       const tools=document.createElement("div"); tools.className="photo-tools";
-      const ch=document.createElement("button"); ch.type="button"; ch.textContent="Change photo"; ch.onclick=()=>input.click(); tools.appendChild(ch);
+      const ch=document.createElement("label"); ch.htmlFor=input.id; ch.textContent="Change photo"; tools.appendChild(ch);
       if(local){ const rm=document.createElement("button"); rm.type="button"; rm.textContent="Remove"; rm.onclick=()=>{try{localStorage.removeItem(key(i));}catch(e){} render(i);}; tools.appendChild(rm); }
       fig.appendChild(tools);
     } else {
       fig.style.border="";
-      const b=document.createElement("button"); b.type="button"; b.className="photo-add";
-      b.innerHTML=CAM+'<span>'+ph.label+'</span><small>Tap to add a photo</small>'; b.onclick=()=>input.click();
+      const b=document.createElement("label"); b.className="photo-add"; b.htmlFor=input.id;
+      b.innerHTML=CAM+'<span>'+ph.label+'</span><small>Tap to add a photo</small>';
       fig.appendChild(b);
     }
     fig.appendChild(input);
